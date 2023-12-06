@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toggle Button</title>
+    <style>
+        /* Toggle switch styling */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 100px;
+            /* Adjust width to accommodate labels */
+            height: 34px;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #2196F3;
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Additional styling for labels */
+        .on-label,
+        .off-label {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: white;
+            padding: 0 5px;
+        }
+
+        .on-label {
+            left: 4px;
+        }
+
+        .off-label {
+            right: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Toggle Button</h1>
+
+    <label for="toggleSwitch" class="switch">
+        <input type="checkbox" id="toggleSwitch" onchange="toggleSwitch()">
+        <span class="slider"></span>
+        <div class="on-label">ON</div>
+        <div class="off-label">OFF</div>
+    </label>
+
+    <script>
+        let ipAddress;
+
+        // Extract IP address from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        ipAddress = urlParams.get('ip');
+
+        function toggleSwitch() {
+            const toggleSwitch = document.getElementById('toggleSwitch');
+            const onLabel = document.querySelector('.on-label');
+            const offLabel = document.querySelector('.off-label');
+
+            if (toggleSwitch.checked) {
+                onLabel.style.color = 'white';
+                offLabel.style.color = '#ccc';
+            } else {
+                onLabel.style.color = '#ccc';
+                offLabel.style.color = 'white';
+            }
+
+            const url = toggleSwitch.checked ? `http://${ipAddress}/turnOff` : `http://${ipAddress}/turnOn`;
+
+            sendRequest(url);
+        }
+
+        function sendRequest(url) {
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert(data); // Display response message
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error occurred. Please try again.');
+                });
+        }
+    </script>
+</body>
+
+</html>
